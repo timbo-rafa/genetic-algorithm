@@ -3,6 +3,7 @@
 import random
 from chromosome import Chromosome
 from graph import Graph #
+from itertools import repeat
 import numpy as np
 
 POPULATION_SIZE=300
@@ -26,7 +27,7 @@ class GA():
       raise ValueError("Elite size must be positive.")
     self.p_elite_offspring = p_elite_offspring
     self.mutation_probability = mutation_probability
-    self.population = [Chromosome(self.g.n - 1, random=True) for _ in range(population_size)]
+    self.population = [Chromosome(self.g.n -1, random=True) for _ in repeat(None,population_size)]
     self.calculate_fitness()
 
   def fitness(self, chromosome):
@@ -71,7 +72,7 @@ class GA():
       else:
         elite_n = self.elite_size
 
-    for _ in range(self.population_size//2 - self.elite_size//2):
+    for _ in repeat(None, self.population_size//2 - self.elite_size//2):
       #reproduce
       p1 = self.weighted_choice()
       p2 = self.weighted_choice()
@@ -92,3 +93,9 @@ class GA():
 
   def best_fitness(self):
     return self.fittest().fitness
+
+  def exchange(self, incomers):
+#exchange individuals from other populations
+    self.population.extend(incomers)
+    self.population.sort(key=lambda x: x.fitness)
+    del self.population[len(self.population) - len(incomers) - 3: len(self.population) - 3]
