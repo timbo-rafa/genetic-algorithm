@@ -14,6 +14,7 @@ def run(
   cities,
 #ga parameters
   population_size, elite_size, mutation_probability, latex=False):
+#Checking for valid parameters
   if (independent_populations <= 0):
     raise ValueError("Number of independent populations must be positive.")
   if (exchange_after > generations):
@@ -21,6 +22,24 @@ def run(
       "Number of generations needed to exchange top individuals must be smaller than \
       number of generations.")
   
+
+  if (not latex):
+    print("Number of Independent Populations={nip}".format(nip=independent_populations))
+    print("Generations before exchanging top individuals={e}".format(e=exchange_after))
+    print("Maximum number of idle generations={sa}".format(sa=stop_after))
+    print("Maximum number of generations={max}".format(max=generations))
+    print("Population size={ps}".format(ps=population_size))
+    print("Elite size={es}".format(es=elite_size))
+    print("Mutation probability={mp}".format(mp=mutation_probability))
+  else:
+    print("Independent Populations & {ip} //".format(ip=independent_populations))
+    print("Exchange after & {e} //".format(e=exchange_after))
+    print("Stop after & {sa} //".format(sa=stop_after))
+    print("Max \# generations & {max} //".format(max=generations))
+    print("Population size & {ps} //".format(ps=population_size))
+    print("Elite size & {es} //".format(es=elite_size))
+    print("Mutation probability & {mp} //".format(mp=mutation_probability))
+
   g = Graph(cities)
   ga = []
 #initialize all populations
@@ -34,10 +53,12 @@ def run(
 
   start_time = time.clock()
   if (not latex):
+#Print starting fitness
     print("[{time:09.2f}] {start:<16}: {population_space:13} Fitness: {fitness:8d}".format(
       time=time.clock() - start_time,start="Genesis", population_space="",
       fitness=fittest.fitness))
   else:
+#Print latex header
     print("{time:>9} & {gen:<5} & {pop:<4} & {fitness:<8} //".format(
       time="Time", gen="Gen", pop="Pop", fitness="Fitness"))
 
@@ -107,13 +128,14 @@ def run(
     else:
       print("{time:9.2f} & {gen:<5d} & Stop & {f:<8d} //".format(
         time=time.clock() - start_time, gen=generation, f=fittest.fitness))
+
   return fittest
 
 if __name__ == '__main__':
-  run(mp.cpu_count()//2, 10, 20, 100, 200, 256, 10, 0.10)
+  run(mp.cpu_count(), 80, 200, 1000, 200, 256, 10, 0.10)
   #run(mp.cpu_count(), 50, 200, 1000, 200, 700, 50, 0.20)
   #run(mp.cpu_count(), 50, 200, 1000, 200, 100, 5, 0.05)
 
 # TO DO
+# break run into functions
 # parallel populations
-# print parameters
