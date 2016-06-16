@@ -9,7 +9,7 @@ MAX_GRAPH_WEIGHT=200
 FILENAME="graph.gpickle"
 
 class Graph():
-  def __generate(self):
+  def generate(self):
     self.g = nx.Graph()
     for i in range(0, self.n):
       for j in range(0, self.n):
@@ -26,13 +26,13 @@ class Graph():
   def __copy(self, g):
     self.g = g
 
-  def __read(self):
+  def read(self):
     return nx.read_gpickle(self.filename)
 
   def __init__(self, n, source=None, save=True, option='generate', filename=FILENAME):
     self.create =  {
-      'generate' : self.__generate,
-      'read': self.__read,
+      'generate' : self.generate,
+      'read': self.read,
     }
     if (source == None):
       self.source = n - 1
