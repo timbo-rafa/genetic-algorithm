@@ -36,7 +36,6 @@ class State():
         self.fittest_time = time.clock()
         self.fittest = pop.fittest()
         self.fittest_pop = self.ga.index(pop)
-        print("update! Fitness ", self.fittest.fitness)
     return change
 
   def print_parameters(self):
