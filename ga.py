@@ -58,6 +58,7 @@ class GA():
     self.new_population = []
 
     #elitism
+    #print("Evolve {f}".format(f=self.fittest().fitness))
     current = self.population[0]
     self.new_population.append(current)
     elite_n = 1
@@ -89,7 +90,7 @@ class GA():
     self.calculate_fitness()
     #fittest solution in self.population[0]
     self.population.sort(key=lambda x: x.fitness)
-    return self.fittest()
+    return self.population
 
   def best_fitness(self):
     return self.fittest().fitness
