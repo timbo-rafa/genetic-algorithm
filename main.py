@@ -29,7 +29,9 @@ class State():
 
   def update_fittest(self):
     change = False
+    #print("Fittest ", self.fittest.fitness)
     for pop in self.ga:
+      #print("  ", self.fittest.fitness > pop.fittest().fitness, " ", pop.fittest().fitness)
       if (self.fittest.fitness > pop.fittest().fitness):
         change = True
         self.progress = True
@@ -108,7 +110,7 @@ class State():
         time=time.clock() - self.start_time, gen=generation, f=self.fittest.fitness))
 
 def evolve_map(ga):
-  ga.evolve()
+  return ga.evolve()
 
 def run(
 #parameters
@@ -140,15 +142,20 @@ def run(
     progress=False, start_time=time.clock())
 
   s.print_header()
-  #pool = mp.Pool(processes=independent_populations)
+  pool = mp.Pool(processes=independent_populations)
   idle_time = 0
 #loop for generations
   for generation in range(s.generations):
     s.progress = False
 #evolve population for one iteration
-    #pool.map(evolve_map, s.ga)
-    for pop in ga:
-      pop.evolve()
+    r = pool.map(evolve_map, s.ga)
+    for gai, ri in zip(s.ga, r):
+      gai.population = ri
+#clones memory into another process then its lost making it not evolve?
+    #for pop in s.ga:
+    #  r.append(pool.apply_async(pop.evolve, args = (pop,)))
+    #for x in r:
+    #  x.wait()
     #print("Generation =>: ", generation)
 #check if a fitter individual was born and print its characteristics
     if (s.update_fittest()):
@@ -184,7 +191,7 @@ def run(
 
 if __name__ == '__main__':
   #run(indep_pop, exchange, stop, gen, cities, pop_size, elite_size, mut_p
-  run(mp.cpu_count(), 80, 200, 1000, 200, 256, 10, 0.10)
+  run(mp.cpu_count(), 80, 200, 5000, 200, 120, 10, 0.10)
   #run(mp.cpu_count(), 50, 200, 1000, 200, 700, 50, 0.20)
   #run(mp.cpu_count(), 50, 200, 1000, 200, 100, 5, 0.05)
 
