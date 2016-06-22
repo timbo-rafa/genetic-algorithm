@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from graph import Graph
-from ga import GA
+from ga_parallel import GA
 import itertools
 import time
 import multiprocessing as mp
@@ -109,6 +109,14 @@ class State():
       print("{time:9.2f} & {gen:<5d} & Stop & {f:<8d} //".format(
         time=time.clock() - self.start_time, gen=generation, f=self.fittest.fitness))
 
+  def print_solution(self, source):
+    path_str = "{n}".format(n=source)
+    s = ">{n}"
+    for city in self.fittest:
+      path_str += s.format(n=city)
+    path_str += s.format(n=source)
+    print(path_str)
+
 def evolve_map(ga):
   return ga.evolve()
 
@@ -125,17 +133,17 @@ def run(
     raise ValueError("Number of independent populations must be positive.")
   if (exchange_after > generations):
     raise ValueError(
-      "Number of generations needed to exchange top individuals must be smaller than \
-      number of generations.")
+      "Number of generations needed to exchange top individuals must be smaller than " +
+      "number of generations.")
   
-
 #Print parameters  
   if (verbose):
     s.print_parameters()
 
   g = Graph(cities)
   ga = [GA(g, population_size=population_size, elite_size=elite_size,
-    mutation_probability=mutation_probability) for _ in range(independent_populations)]
+    mutation_probability=mutation_probability, number_of_cores=independent_populations)
+    for _ in range(independent_populations)]
 #initialize all populations
   s = State(independent_populations, exchange_after, stop_after, generations, latex,
     ga,
@@ -148,15 +156,11 @@ def run(
   for generation in range(s.generations):
     s.progress = False
 #evolve population for one iteration
-    r = pool.map(evolve_map, s.ga)
-    for gai, ri in zip(s.ga, r):
-      gai.population = ri
-#clones memory into another process then its lost making it not evolve?
-    #for pop in s.ga:
-    #  r.append(pool.apply_async(pop.evolve, args = (pop,)))
-    #for x in r:
-    #  x.wait()
-    #print("Generation =>: ", generation)
+    for pop in s.ga:
+      pop.evolve()
+    #res = pool.map(evolve_map, s.ga)
+    #for sga, r in zip(s.ga, res):
+    #  sga.population = r
 #check if a fitter individual was born and print its characteristics
     if (s.update_fittest()):
       s.print_state(generation)
@@ -187,11 +191,15 @@ def run(
   if (generation + 1 == generations):
     s.print_stop(generation)
 
+  if (verbose):
+    s.print_solution(g.source)
+  pool.close()
+  pool.join()
   return s.fittest
 
 if __name__ == '__main__':
   #run(indep_pop, exchange, stop, gen, cities, pop_size, elite_size, mut_p
-  run(mp.cpu_count(), 80, 200, 5000, 200, 120, 10, 0.10)
+  run(mp.cpu_count(), 80, 200, 100, 200, 170, 10, 0.10)
   #run(mp.cpu_count(), 50, 200, 1000, 200, 700, 50, 0.20)
   #run(mp.cpu_count(), 50, 200, 1000, 200, 100, 5, 0.05)
 
