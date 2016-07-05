@@ -4,9 +4,9 @@ import argparse
 def parse_arguments():
   parser = argparse.ArgumentParser(prog="python3 main.py",
     description="A parallel genetic algorithm implementation for the TSP problem")
-  parser.add_argument("-i", "--independent", type=int, metavar="N",
-    help="Number of independent populations", required=True)
   parser.add_argument("-p", "--populations", type=int, metavar="N",
+    help="Number of independent populations", required=True)
+  parser.add_argument("-c", "--chromosomes", type=int, metavar="N",
     help="Population size (number of chromosomes per population)", required=True)
   parser.add_argument("-w", "--workers", type=int, metavar="N",
     help="Number of pool workers (parallelism)", required=True)
@@ -29,8 +29,7 @@ def parse_arguments():
 if __name__ == '__main__':
   args = parse_arguments()
   controller.run(exchange_after=args.exchange, stop_after=args.generations,
-    generations=args.generations, cities=args.cities, population_size=args.populations,
-    elite_size=args.elite, mutation_probability=args.mprobability)
-  controller.run(exchange_after=20, stop_after=1000, generations=900, cities=200,
-    population_size=220, elite_size=20, mutation_probability=0.20)
+    generations=args.generations, cities=args.cities, population_size=args.chromosomes,
+    elite_size=args.elite, mutation_probability=args.mprobability,
+    independent_populations=args.populations)
 
