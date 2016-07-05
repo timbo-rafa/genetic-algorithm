@@ -94,9 +94,8 @@ class GA():
 
   def best_fitness(self):
     return self.fittest().fitness
-
+    
   def exchange(self, incomers):
-#exchange individuals from other populations
     self.population.extend(incomers)
     self.population.sort(key=lambda x: x.fitness)
     del self.population[len(self.population) - len(incomers) - 3: len(self.population) - 3]

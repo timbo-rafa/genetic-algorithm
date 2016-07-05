@@ -22,7 +22,6 @@ class Chromosome():
   def __eq__(self, chr2):
     return np.array_equal(self.path, chr2.path)
     #return self.path == chr2.path
-
   def __ne__(self, chr2):
     return not self.__eq__(chr2)
 
