@@ -5,6 +5,12 @@ import time
 
 f=open("main.log", "w")
 
+def qget(q, i):
+  print("Main Queue({i})...".format(i=i), end="", file=f)
+  r = q.get()
+  print("{r}".format(r=r), file=f)
+  return r
+
 def evolve_map(ga):
   return ga.evolve()
 
@@ -15,7 +21,7 @@ def run(
   cities,
 #ga parameters
   population_size, elite_size, mutation_probability,
-  independent_populations=4, 
+  independent_populations, number_workers, 
   verbose=False, latex=False):
 #Checking for valid parameters
   if (exchange_after > generations):
@@ -28,7 +34,7 @@ def run(
     s.print_parameters()
 
 #initialize algorithm
-  ga = GA(cities, independent_populations,
+  ga = GA(cities, independent_populations, number_workers,
     generations, exchange_after, stop_after,
     population_size=population_size,
     elite_size=elite_size, mutation_probability=mutation_probability)

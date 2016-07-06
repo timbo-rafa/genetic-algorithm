@@ -67,6 +67,13 @@ def evolve_consumer_worker(q, chunksize, mutation_probability, wid):
   print("Finished", file=f)
   return new_pop
 
+def calculate_fitness_worker(g, chromosomes):
+    return self.fitness(c)
+    c.fitness = self.fitness(c)
+    c.weighted_fitness = 1.0/c.fitness
+    self.fitness_total += c.fitness
+    self.weighted_total += c.weighted_fitness
+
 class MessageGA():
   def __init__(self, generation, population, fittest_fitness, pid=-1):
     self.generation = generation
@@ -86,7 +93,7 @@ class MessageGA():
     return r
 
 class GA():
-  def __init__(self, cities, independent_populations,
+  def __init__(self, cities, independent_populations, number_workers,
       generations, exchange_after, stop_after,
       population_size=POPULATION_SIZE, p_elite=P_ELITE,
       p_elite_offspring=P_ELITE_OFFSPRING, elite_size=ELITE_SIZE,
@@ -100,6 +107,7 @@ class GA():
     self.generations = generations
     self.exchange_after = exchange_after
     self.stop_after = stop_after
+    self.number_workers = number_workers
     if (independent_populations == None):
       self.independent_populations = mp.cpu_count()
     else:
@@ -109,18 +117,18 @@ class GA():
           .format(e=self.elite_size,p=self.population_size))
     if (self.elite_size < 1):
       raise ValueError("Elite size must be positive.")
-    if ((population_size - elite_size) % (2 * self.independent_populations) != 0):
+    if ((population_size - elite_size) % (2 * self.number_workers) != 0):
       raise ValueError(("Population size({ps}) - Elite size({es}) must be a multiple of " +
-        "2*independent_populations=({dc}). Population size - elite size  % {dc} = {r}").format(
-        ps=population_size, es=elite_size, dc=2*self.independent_populations,
-        r=(population_size - elite_size) % (2 * self.independent_populations)))
+        "2*number_workers=({dc}). Population size - elite size  % {dc} = {r}").format(
+        ps=population_size, es=elite_size, dc=2*self.number_workers,
+        r=(population_size - elite_size) % (2 * self.number_workers)))
 
   def __init_per_process__(self):
     self.g = Graph(self.chromosome_size + 1)
     self.population = [
       Chromosome(self.chromosome_size, random=True) for _ in repeat(None,self.population_size)]
     self.calculate_fitness()
-    #self.pool = mp.Pool(processes=self.independent_populations)
+    #self.pool = mp.Pool(processes=self.number_workers)
     #self.consumer_queue = mp.Queue()
 
   def fitness(self, chromosome):
@@ -131,8 +139,11 @@ class GA():
     self.weighted_total = 0.0
 #paralelizar
     for c in self.population:
-      c.fitness = self.fitness(c)
-      c.weighted_fitness = 1.0/c.fitness
+      try:
+        c.fitness
+      except AttributeError:
+        c.fitness = self.fitness(c)
+        c.weighted_fitness = 1.0/c.fitness
       self.fitness_total += c.fitness
       self.weighted_total += c.weighted_fitness
 
@@ -147,10 +158,11 @@ class GA():
     self.__init_per_process__()
     output_queue.put(MessageGA(-1, pid, self.best_fitness()))
     total = (self.population_size - self.elite_size)//2
-    chunksize = total//self.independent_populations
+    chunksize = total//self.number_workers
     idle_time = 0
     f2 = open(str(pid) + ".log", "w")
-    consumer_queue = mp.Queue()
+    consumer_queue = mp.Manager().Queue()
+    pool = mp.Pool(processes=self.number_workers)
     for gen in range(self.generations):
       progress = False
       new_population = []
@@ -169,20 +181,31 @@ class GA():
           elite_n = self.elite_size
       
       print("gen({g}) started>".format(g=gen), end="", file=f2)
-      #prod = pool.apply_async(weighted_choice_producer_worker,
-      #  args=(consumer_queue, total, self.weighted_total, self.population, pid))
-      prod = mp.Process(target=weighted_choice_producer_worker, 
-        args=(consumer_queue, total, self.weighted_total, self.population, pid))
-      prod.start()
+      prod = []
+      remainder = total % self.number_workers
+      for _ in repeat(None, self.number_workers//2):
+        prod.append(pool.apply_async(weighted_choice_producer_worker, args=(
+          consumer_queue, chunksize + remainder, self.weighted_total, self.population, pid)))
+        remainder = 0
+
       print("Producer Started>", end="", file=f2)
       
-      reproduced_and_mutated_individuals = evolve_consumer_worker(
-        consumer_queue, total, self.mutation_probability, pid)
-      new_population.extend(reproduced_and_mutated_individuals)
+      cons = []
+      remainder = total % self.number_workers
+      for _ in repeat(None, self.number_workers//2):
+        cons.append(pool.apply_async(evolve_consumer_worker,
+          args=(consumer_queue, chunksize + remainder, self.mutation_probability, pid)))
+        remainder = 0
+
+      self.population = new_population
+      for c in cons:
+        self.population.extend(c.get())
 
       print("Consumer returned>", end="", file=f2)
-      #exit nicely waiting for async stuff (which should be done)
-      self.population = new_population
+      for p in prod:
+        p.wait()
+      print("Waited producer>", end="", file=f2)
+
 
       #update solution
       self.calculate_fitness()
@@ -201,8 +224,6 @@ class GA():
         print("Done", file=f2)
         self.exchange(incomers)
 
-      prod.join()
-      print("Joined producer>", end="", file=f2)
       print("gen({g}) ended".format(g=gen), file=f2)
 
       if (self.fittest() != fittest):
@@ -214,7 +235,7 @@ class GA():
         break #generation loop
 
       
-    consumer_queue.close()
+    #consumer_queue.close()
     output_queue.close()
     arrival_queue.close()
     departure_queue.close()
