@@ -79,7 +79,7 @@ def run(
     s.print_stop(generation)
 
   if (verbose):
-    s.print_solution(g.source)
+    s.print_solution()
 
   for ql in [pqueue, departure_queues, arrival_queues]:
     for q in ql:

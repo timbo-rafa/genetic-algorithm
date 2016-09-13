@@ -23,9 +23,7 @@ class State():
 
   def update_fittest(self):
     change = False
-    #print("Fittest ", self.fitness)
     for q in self.pqueue:
-      #print("  ", self.fitness > pop.fittest().fitness, " ", pop.fittest().fitness)
       m = q.get()
       try:
         self.fitness
@@ -110,10 +108,15 @@ class State():
       print("{time:9.2f} & {gen:<5d} & Stop & {f:<8d} //".format(
         time=time.perf_counter() - self.start_time, gen=generation, f=self.fitness))
 
-  def print_solution(self, source):
-    path_str = "{n}".format(n=source)
+  def print_solution(self):
+    fittest = None
+    for q in self.pqueue:
+      qfitness = q.get()
+      qfittest = q.get()
+      if (qfitness == self.fitness):
+          fittest = qfittest
+    path_str = "{n}".format(n=fittest[0])
     s = ">{n}"
-    for city in self.fittest:
+    for city in fittest[1:]:
       path_str += s.format(n=city)
-    path_str += s.format(n=source)
     print(path_str)

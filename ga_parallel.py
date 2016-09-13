@@ -204,7 +204,10 @@ class GA():
       if (idle_time == self.stop_after):
         print("Breaking(idle={i})".format(i=idle_time))
         break #generation loop
-      
+    
+    output_queue.put(self.best_fitness())
+    output_queue.put(
+      np.append(np.insert(self.fittest().path, 0, self.g.source), self.g.source))
     #consumer_queue.close()
     output_queue.close()
     arrival_queue.close()
