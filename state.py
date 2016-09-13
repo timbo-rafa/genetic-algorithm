@@ -10,8 +10,8 @@ def qget(q, i):
 
 class State():
   def __init__(self, pqueue,
-    independent_populations, exchange_after, stop_after, generations,
-    latex, ga,
+    independent_populations, population_size, elite_size, mutation_probability,
+    exchange_after, stop_after, generations, latex, ga,
     progress=False, fittest=None, start_time=time.perf_counter()):
 
     self.progress = progress
@@ -20,6 +20,9 @@ class State():
     self.latex = latex
     self.ga = ga
     self.independent_populations = independent_populations
+    self.population_size = population_size
+    self.elite_size = elite_size
+    self.mutation_probability = mutation_probability
     self.exchange_after = exchange_after
     self.stop_after = stop_after
     self.generations = generations
@@ -48,21 +51,21 @@ class State():
 
   def print_parameters(self):
     if(not self.latex):
-      print("Number of Independent Populations={nip}".format(nip=independent_populations))
-      print("Generations before exchanging top individuals={e}".format(e=exchange_after))
-      print("Maximum number of idle generations={sa}".format(sa=stop_after))
-      print("Maximum number of generations={max}".format(max=generations))
-      print("Population size={ps}".format(ps=population_size))
-      print("Elite size={es}".format(es=elite_size))
-      print("Mutation probability={mp}".format(mp=mutation_probability))
+      print("Number of Independent Populations={nip}".format(nip=self.independent_populations))
+      print("Generations before exchanging top individuals={e}".format(e=self.exchange_after))
+      print("Maximum number of idle generations={sa}".format(sa=self.stop_after))
+      print("Maximum number of generations={max}".format(max=self.generations))
+      print("Population size={ps}".format(ps=self.population_size))
+      print("Elite size={es}".format(es=self.elite_size))
+      print("Mutation probability={mp}".format(mp=self.mutation_probability))
     else:
-      print("Independent Populations & {ip} //".format(ip=independent_populations))
-      print("Exchange after & {e} //".format(e=exchange_after))
-      print("Stop after & {sa} //".format(sa=stop_after))
-      print("Max \# generations & {max} //".format(max=generations))
-      print("Population size & {ps} //".format(ps=population_size))
-      print("Elite size & {es} //".format(es=elite_size))
-      print("Mutation probability & {mp} //".format(mp=mutation_probability))
+      print("Independent Populations & {ip} //".format(ip=self.independent_populations))
+      print("Exchange after & {e} //".format(e=self.exchange_after))
+      print("Stop after & {sa} //".format(sa=self.stop_after))
+      print("Max \# generations & {max} //".format(max=self.generations))
+      print("Population size & {ps} //".format(ps=self.population_size))
+      print("Elite size & {es} //".format(es=self.elite_size))
+      print("Mutation probability & {mp} //".format(mp=self.mutation_probability))
 
   def print_header(self):
     if (not self.latex):

@@ -28,10 +28,6 @@ def run(
     raise ValueError(
       "Number of generations needed to exchange top individuals must be smaller than " +
       "number of generations.")
-  
-#Print parameters  
-  if (verbose):
-    s.print_parameters()
 
 #initialize algorithm
   ga = GA(cities, independent_populations, number_workers,
@@ -43,9 +39,13 @@ def run(
   proc, pqueue, departure_queues, arrival_queues = ga.evolve()
 
 #state and printing
-  s = State(pqueue, independent_populations, exchange_after, stop_after, generations, latex,
-    ga,
+  s = State(pqueue, independent_populations, population_size, elite_size, mutation_probability,
+    exchange_after, stop_after, generations, latex, ga,
     progress=False, start_time=time.perf_counter())
+  
+#Print parameters  
+  if (verbose):
+    s.print_parameters()
 
   s.print_header()
   idle_time = 0
