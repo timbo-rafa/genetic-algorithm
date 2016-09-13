@@ -3,14 +3,6 @@ from state import State
 import itertools
 import time
 
-f=open("main.log", "w")
-
-def qget(q, i):
-  print("Main Queue({i})...".format(i=i), end="", file=f)
-  r = q.get()
-  print("{r}".format(r=r), file=f)
-  return r
-
 def evolve_map(ga):
   return ga.evolve()
 
@@ -51,7 +43,6 @@ def run(
   idle_time = 0
 #start evolution asynchronously
   for generation in range(s.generations):
-    print("Main({g})...".format(g=generation), file=f)
     s.progress = False
 #evolve population for one iteration
     #res = pool.map(evolve_map, s.ga)
@@ -64,12 +55,9 @@ def run(
 #Exchange best individuals from each population if it is on proper generation
     if (((generation % exchange_after) == 0) and (independent_populations > 1)
         and generation):
-      print("Main exchange...", end="", file=f)
       s.print_exchange(generation)
       for i in range(independent_populations):
-        print("receiving immi from {i}...".format(i=i), end="", file=f)
         immigrant = departure_queues[i].get()
-        print("Done", file=f)
         for j in range(independent_populations):
           if (i != j):
             arrival_queues[j].put(immigrant)

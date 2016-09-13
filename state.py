@@ -1,13 +1,5 @@
 import time
 
-f=open("main.log", "w")
-
-def qget(q, i):
-  print("Main Queue({i})...".format(i=i), end="", file=f)
-  r = q.get()
-  print("{r}".format(r=r), file=f)
-  return r
-
 class State():
   def __init__(self, pqueue,
     independent_populations, population_size, elite_size, mutation_probability,
@@ -32,9 +24,9 @@ class State():
   def update_fittest(self):
     change = False
     #print("Fittest ", self.fitness)
-    for i, q in enumerate(self.pqueue):
+    for q in self.pqueue:
       #print("  ", self.fitness > pop.fittest().fitness, " ", pop.fittest().fitness)
-      m = qget(q, i)
+      m = q.get()
       try:
         self.fitness
       except:

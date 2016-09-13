@@ -14,11 +14,6 @@ MUTATION_PROBABILITY=0.10
 P_ELITE_OFFSPRING=0.70
 ELITE_SIZE=10 # number of best individuals that will survive through generations
 
-def qput(q, item, f2):
-  print("Worker Producer...", end="", file=f2)
-  q.put(item)
-  print("  {item}".format(item=item), file=f2)
-
 def round_down(num, divisor):
   return num - (num % divisor)
 
@@ -33,30 +28,18 @@ def weighted_choice(weighted_total, population):
 
 def weighted_choice_producer_worker(q, chunksize, weighted_total, population, wid):
   """Asynchronous producer function that chooses n chromosomes from population"""
-  #print("Weighted choice producer self={s} q={q} chunksize={c}"
 
-  f = open("wp" + str(wid) + ".log", "w")
   for _ in repeat(None, chunksize):
     t = (weighted_choice(weighted_total, population),
          weighted_choice(weighted_total, population))
-    qput(q, t, f)
-    #q.put(t)
-  print("Finished", file=f)
-
-def qget(q, f):
-  print("worker Consumer...", end="", file=f)
-  r = q.get()
-  print(" {r}".format(r=r), file=f)
-  return r
+    q.put(t)
 
 def evolve_consumer_worker(q, chunksize, mutation_probability, wid):
   """Asynchronous consumer function that reproduces and mutates the population
   producing _chunksize_ individuals"""
   new_pop = []
-  f = open("wc" + str(wid) + ".log", "w")
-  #print("evolve consumer self={s} q={q} chunksize={c}".format(s=self, q=q, c=chunksize))
   for _ in repeat(None, chunksize):
-    chromosome_pair = qget(q, f)
+    chromosome_pair = q.get()
 #reproduce
     child1, child2 = chromosome_pair[0].crossover(chromosome_pair[1])
 #mutate
@@ -70,18 +53,11 @@ def evolve_consumer_worker(q, chunksize, mutation_probability, wid):
     new_pop.append(child1)
     new_pop.append(child2)
 
-  print("Finished", file=f)
   return new_pop
 
 def calculate_fitness_worker(g, chromosomes):
-  #TODO : ver onde que seta o fitness se aqui ou na hora da mutacao/crossover
-# precisa passar o loop em tudo?? se criar quando reproduz?
+#TODO :
 # fazer loop paralelo no path_cost talvez
-      #try:
-      c.fitness
-      #except AttributeError:
-      #  c.fitness = self.fitness(c)
-      #  c.weighted_fitness = 1.0/c.fitness
       self.fitness_total += c.fitness
       self.weighted_total += c.weighted_fitness
 
@@ -100,7 +76,6 @@ class MessageGA():
     else:
       r = "gen({gen}) pop({pop}) fit={fit}".format(
         pid=self.pid, gen=self.generation, pop=self.population, fit=self.fitness)
-    #print(self.pid, self.generation, self.population, self.fitness)
     return r
 
 class GA():
@@ -169,7 +144,7 @@ class GA():
     self.calculate_fitness()
     output_queue.put(MessageGA(-1, pid, self.best_fitness()))
     idle_time = 0
-    f2 = open(str(pid) + ".log", "w")
+    #f2 = open(str(pid) + ".log", "w")
     consumer_queue = mp.Manager().Queue()
     for gen in range(self.generations):
       progress = False
@@ -188,15 +163,12 @@ class GA():
         else:
           elite_n = self.elite_size
       
-      print("gen({g}) started>".format(g=gen), end="", file=f2)
       prod = []
       remainder = total % self.number_workers
       for _ in repeat(None, self.number_workers//2):
         prod.append(self.pool.apply_async(weighted_choice_producer_worker, args=(
           consumer_queue, chunksize + remainder, self.weighted_total, self.population, pid)))
         remainder = 0
-
-      print("Producer Started>", end="", file=f2)
       
       cons = []
       remainder = total % self.number_workers
@@ -209,11 +181,8 @@ class GA():
       for c in cons:
         self.population.extend(c.get())
 
-      print("Consumer returned>", end="", file=f2)
       for p in prod:
         p.wait()
-      print("Waited producer>", end="", file=f2)
-
 
       #update solution
       self.calculate_fitness()
@@ -221,18 +190,12 @@ class GA():
       self.population.sort(key=lambda x: x.fitness)
       fittest = self.fittest()
 
-      qput(output_queue,MessageGA(gen, pid, self.best_fitness()), f2)
-      #output_queue.put(MessageGA(gen, pid, self.best_fitness()))
+      output_queue.put(MessageGA(gen, pid, self.best_fitness()))
 
       if ((gen % self.exchange_after) == 0 and self.independent_populations > 1 and gen):
-        print("Exchange...", end="", file=f2)
         departure_queue.put(self.fittest())
-        print("receiving immis...", end="", file=f2)
         incomers = [arrival_queue.get() for _ in repeat(None, self.independent_populations - 1)]
-        print("Done", file=f2)
         self.exchange(incomers)
-
-      print("gen({g}) ended".format(g=gen), file=f2)
 
       if (self.fittest() != fittest):
         idle_time = 0
@@ -241,7 +204,6 @@ class GA():
       if (idle_time == self.stop_after):
         print("Breaking(idle={i})".format(i=idle_time))
         break #generation loop
-
       
     #consumer_queue.close()
     output_queue.close()
