@@ -7,6 +7,7 @@ class Chromosome():
   The array represents the order in which the cities should be visited"""
 
   def __init__(self, arg, random=True):
+    self.fitness = None
     if (isinstance(arg, int)):
       self.path = np.arange(arg)
       if (random):

@@ -2,7 +2,7 @@
 
 import random
 from chromosome import Chromosome
-from graph import Graph #
+from graph import Graph
 from itertools import repeat
 import numpy as np
 import multiprocessing as mp
@@ -18,6 +18,9 @@ def qput(q, item, f2):
   print("Worker Producer...", end="", file=f2)
   q.put(item)
   print("  {item}".format(item=item), file=f2)
+
+def round_down(num, divisor):
+  return num - (num % divisor)
 
 def weighted_choice(weighted_total, population):
   choice = random.uniform(0, weighted_total)
@@ -61,6 +64,9 @@ def evolve_consumer_worker(q, chunksize, mutation_probability, wid):
       child1.mutate()
     if (random.random() < mutation_probability ):
       child2.mutate()
+    # Erase fitness to be updated later
+    child1.fitness = None
+    child2.fitness = None
     new_pop.append(child1)
     new_pop.append(child2)
 
@@ -68,11 +74,16 @@ def evolve_consumer_worker(q, chunksize, mutation_probability, wid):
   return new_pop
 
 def calculate_fitness_worker(g, chromosomes):
-    return self.fitness(c)
-    c.fitness = self.fitness(c)
-    c.weighted_fitness = 1.0/c.fitness
-    self.fitness_total += c.fitness
-    self.weighted_total += c.weighted_fitness
+  #TODO : ver onde que seta o fitness se aqui ou na hora da mutacao/crossover
+# precisa passar o loop em tudo?? se criar quando reproduz?
+# fazer loop paralelo no path_cost talvez
+      #try:
+      c.fitness
+      #except AttributeError:
+      #  c.fitness = self.fitness(c)
+      #  c.weighted_fitness = 1.0/c.fitness
+      self.fitness_total += c.fitness
+      self.weighted_total += c.weighted_fitness
 
 class MessageGA():
   def __init__(self, generation, population, fittest_fitness, pid=-1):
@@ -127,8 +138,7 @@ class GA():
     self.g = Graph(self.chromosome_size + 1)
     self.population = [
       Chromosome(self.chromosome_size, random=True) for _ in repeat(None,self.population_size)]
-    self.calculate_fitness()
-    #self.pool = mp.Pool(processes=self.number_workers)
+    self.pool = mp.Pool(processes=self.number_workers)
     #self.consumer_queue = mp.Queue()
 
   def fitness(self, chromosome):
@@ -139,9 +149,7 @@ class GA():
     self.weighted_total = 0.0
 #paralelizar
     for c in self.population:
-      try:
-        c.fitness
-      except AttributeError:
+      if (not c.fitness):
         c.fitness = self.fitness(c)
         c.weighted_fitness = 1.0/c.fitness
       self.fitness_total += c.fitness
@@ -156,13 +164,13 @@ class GA():
       arrival_queue):   #queue where this population receives new individuals
 
     self.__init_per_process__()
-    output_queue.put(MessageGA(-1, pid, self.best_fitness()))
     total = (self.population_size - self.elite_size)//2
     chunksize = total//self.number_workers
+    self.calculate_fitness()
+    output_queue.put(MessageGA(-1, pid, self.best_fitness()))
     idle_time = 0
     f2 = open(str(pid) + ".log", "w")
     consumer_queue = mp.Manager().Queue()
-    pool = mp.Pool(processes=self.number_workers)
     for gen in range(self.generations):
       progress = False
       new_population = []
@@ -184,7 +192,7 @@ class GA():
       prod = []
       remainder = total % self.number_workers
       for _ in repeat(None, self.number_workers//2):
-        prod.append(pool.apply_async(weighted_choice_producer_worker, args=(
+        prod.append(self.pool.apply_async(weighted_choice_producer_worker, args=(
           consumer_queue, chunksize + remainder, self.weighted_total, self.population, pid)))
         remainder = 0
 
@@ -193,7 +201,7 @@ class GA():
       cons = []
       remainder = total % self.number_workers
       for _ in repeat(None, self.number_workers//2):
-        cons.append(pool.apply_async(evolve_consumer_worker,
+        cons.append(self.pool.apply_async(evolve_consumer_worker,
           args=(consumer_queue, chunksize + remainder, self.mutation_probability, pid)))
         remainder = 0
 
