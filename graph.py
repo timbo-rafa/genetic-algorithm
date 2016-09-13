@@ -9,16 +9,22 @@ MAX_GRAPH_WEIGHT=200
 FILENAME="graph.gpickle"
 
 class Graph():
-  def generate(self):
-    self.g = nx.Graph()
+  def w(self, i, j):
+    return j * 100 + 1
+
+  def weight_generator(self):
     for i in range(0, self.n):
       for j in range(0, self.n):
         if (i != j):
-          self.g.add_edge(i,j,weight=random.randint(0,MAX_GRAPH_WEIGHT))
-          #if ( i > j):
-          #  self.g.add_edge(i,j,weight=i*100+j)
-          #else:
-          #  self.g.add_edge(i,j,weight=j*100+i)
+          #self.g.add_edge(i,j,weight=random.randint(0,MAX_GRAPH_WEIGHT))
+          if ( i > j):
+            self.g.add_edge(i,j,weight=self.w(i,j))
+          else:
+            self.g.add_edge(i,j,weight=self.w(j,i))
+
+  def generate(self):
+    self.g = nx.Graph()
+    self.weight_generator()
     self.filename="graph{nodes}_{edges}.gpickle".format(
       nodes=self.g.number_of_nodes(), edges=self.g.size())
     return self.g
@@ -47,7 +53,6 @@ class Graph():
     
   def write(self):
     nx.write_gpickle(self.g, self.filename)
-
 
   def path_cost(self, l):
     cost = 0
