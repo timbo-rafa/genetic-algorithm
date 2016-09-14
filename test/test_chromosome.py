@@ -109,17 +109,8 @@ class Test_Chromosome():
     c1copy = c1.copy()
     print(c1.path)
     print(c2.path)
-# [2 8 4 9 1 6 7 3 0 5]
-# [3 5 1 2 9 8 0 6 7 4]
-# [ True False False  True False  True False  True False  True]
-#fix1=[2 9 6 3 5]
-#swap1=[8 4 1 7 0]
-#swap2=[1 8 0 7 4]
     child1, child2 = c1.crossover(c2)
-# assert c1 didnt change
     assert c1copy == c1
-    #np.testing.assert_array_equal(child1.path, [2, 3, 5, 9, 1, 8, 0, 6, 7, 4])
-    #np.testing.assert_array_equal(child2.path, [8, 4, 1, 2, 9, 6, 7, 3, 0, 5])
     np.testing.assert_array_equal(child1.path, [2, 1, 8, 9, 0, 6, 7, 3, 4, 5])
     np.testing.assert_array_equal(child2.path, [3, 5, 8, 2, 9, 4, 1, 6, 7, 0])
 
