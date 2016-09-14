@@ -3,9 +3,6 @@ from state import State
 import itertools
 import time
 
-def evolve_map(ga):
-  return ga.evolve()
-
 def run(
 #parameters
   exchange_after, stop_after, generations,
@@ -15,6 +12,8 @@ def run(
   population_size, elite_size, mutation_probability,
   independent_populations, number_workers, 
   verbose=False, latex=False):
+  """Outermost loop function that evolves the genetic algorithm,
+  delegating output to state and specifics to the GA class"""
 #Checking for valid parameters
   if (exchange_after > generations):
     raise ValueError(
@@ -27,7 +26,7 @@ def run(
     population_size=population_size,
     elite_size=elite_size, mutation_probability=mutation_probability)
   independent_populations = ga.independent_populations
-#run it (non-blocking)
+#run evolution asynchronously (non-blocking)
   proc, pqueue, departure_queues, arrival_queues = ga.evolve()
 
 #state and printing
@@ -36,18 +35,14 @@ def run(
     progress=False, start_time=time.perf_counter())
   
 #Print parameters  
-  if (verbose):
-    s.print_parameters()
+  #if (verbose):
+  s.print_parameters()
 
   s.print_header()
   idle_time = 0
-#start evolution asynchronously
   for generation in range(s.generations):
+#display population progress for one iteration
     s.progress = False
-#evolve population for one iteration
-    #res = pool.map(evolve_map, s.ga)
-    #for sga, r in zip(s.ga, res):
-    #  sga.population = r
 #check if a fitter individual was born and print its characteristics
     if (s.update_fittest()):
       s.print_state(generation)
