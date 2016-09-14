@@ -2,6 +2,7 @@ from nose.tools import assert_equal, assert_not_equal
 from chromosome import Chromosome
 from args import ArgsStrings, parse_arguments
 from mock import patch
+import sys
 
 from ga import GA
 from graph import Graph
@@ -10,23 +11,22 @@ from itertools import repeat
 _multiprocess_can_split_ = True
 
 def test_parse_arguments_bool():
-  argstr = ArgsStrings
-  args = parse_arguments()
-  assert_equal(args.latex  , False)
-  assert_equal(args.verbose, False)
+  with patch.object(sys, "argv", ["./main.py"]):
+    args = parse_arguments()
+    assert_equal(args.latex  , False)
+    assert_equal(args.verbose, False)
 
 def test_parse_arguments_all():
-  argstr = ArgsStrings
+  argstr = ArgsStrings()
   test_args = [ "./main.py"   ,
-    argstr.populations.short  , 8     ,
-    argstr.chromosomes.short  , 440   ,
-    argstr.workers.short      , 4     ,
-    argstr.generations.short  , 5555  ,
-    argstr.elite.short        , 40    ,
-    argstr.mprobability.short , 0.123 ,
-    argstr.cities.short       , 124   ,
-    argstr.exchange.short     , 66    ,
-    argstr.stop.short         , 666   ,
+    argstr.populations.short  , "8"     ,
+    argstr.chromosomes.short  , "440"   ,
+    argstr.workers.short      , "4"     ,
+    argstr.generations.short  , "5555"  ,
+    argstr.elite.short        , "40"    ,
+    argstr.mprobability.short , "0.123" ,
+    argstr.cities.short       , "124"   ,
+    argstr.exchange.short     , "66"    ,
     argstr.latex.short        ,
     argstr.verbose.short      ]
   with patch.object(sys, "argv", test_args):
@@ -39,6 +39,5 @@ def test_parse_arguments_all():
     assert_equal(args.mprobability, 0.123 )
     assert_equal(args.cities      , 124   )
     assert_equal(args.exchange    , 66    )
-    assert_equal(args.stop        , 666   )
     assert_equal(args.latex       , True  )
     assert_equal(args.verbose     , True  )
