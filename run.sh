@@ -8,4 +8,4 @@ python3 main.py --cities 200 \
                 --mprobability 0.20 \
                 --populations 6 \
                 --workers 4 \
-                --verbose \
+                --verbose 

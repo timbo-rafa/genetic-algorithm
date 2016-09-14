@@ -10,7 +10,7 @@ FILENAME="graph.gpickle"
 
 class Graph():
   def w(self, i, j):
-    return j * 100 + 1
+    return j * 5 + 1
 
   def weight_generator(self):
     for i in range(0, self.n):
