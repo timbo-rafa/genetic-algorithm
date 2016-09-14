@@ -80,7 +80,7 @@ class MessageGA():
 
 class GA():
   def __init__(self, cities, independent_populations, number_workers,
-      generations, exchange_after, stop_after,
+      generations, exchange_after,
       population_size=POPULATION_SIZE, p_elite=P_ELITE,
       p_elite_offspring=P_ELITE_OFFSPRING, elite_size=ELITE_SIZE,
       mutation_probability=MUTATION_PROBABILITY):
@@ -92,7 +92,6 @@ class GA():
     self.chromosome_size = cities - 1
     self.generations = generations
     self.exchange_after = exchange_after
-    self.stop_after = stop_after
     self.number_workers = number_workers
     if (independent_populations == None):
       self.independent_populations = mp.cpu_count()
@@ -143,8 +142,6 @@ class GA():
     chunksize = total//self.number_workers
     self.calculate_fitness()
     output_queue.put(MessageGA(-1, pid, self.best_fitness()))
-    idle_time = 0
-    #f2 = open(str(pid) + ".log", "w")
     consumer_queue = mp.Manager().Queue()
     for gen in range(self.generations):
       progress = False
@@ -196,14 +193,6 @@ class GA():
         departure_queue.put(self.fittest())
         incomers = [arrival_queue.get() for _ in repeat(None, self.independent_populations - 1)]
         self.exchange(incomers)
-
-      if (self.fittest() != fittest):
-        idle_time = 0
-      else:
-        idle_time += 1
-      if (idle_time == self.stop_after):
-        print("Breaking(idle={i})".format(i=idle_time))
-        break #generation loop
     
     output_queue.put(self.best_fitness())
     output_queue.put(

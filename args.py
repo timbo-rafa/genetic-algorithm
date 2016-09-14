@@ -13,7 +13,7 @@ class ArgsStrings(Dictionary):
   def __init__(self):
     self.arglist = [ "populations", "chromosomes", "workers",
       "generations", "elite", "mprobability", "cities",
-      "exchange", "stop", "latex", "verbose" ]
+      "exchange", "latex", "verbose" ]
 
     for opt in self.arglist:
       self[opt] = Dictionary()
@@ -26,7 +26,6 @@ class ArgsStrings(Dictionary):
     self["mprobability"].short = "-m"
     self["cities"].short       = "-n"
     self["exchange"].short     = "-x"
-    self["stop"].short         = "-s"
     self["latex"].short        = "-l"
     self["verbose"].short      = "-v"
 
@@ -62,10 +61,6 @@ def parse_arguments():
     type=int, metavar="N",
     help="Number of generations required to exchange individuals",
     default=80)
-  parser.add_argument(argstr.stop.short, argstr.stop.string,
-    type=int, metavar="N",
-    help="Number of idle generations required to stop algorithm",
-    default=800)
   parser.add_argument(argstr.latex.short, argstr.latex.string,
     action="store_true", help="Output in latex format")
   parser.add_argument(argstr.verbose.short, argstr.verbose.string,

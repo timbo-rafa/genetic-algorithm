@@ -3,7 +3,7 @@ import time
 class State():
   def __init__(self, pqueue,
     independent_populations, population_size, elite_size, mutation_probability,
-    exchange_after, stop_after, generations, latex, ga,
+    exchange_after, generations, latex, ga,
     progress=False, fittest=None, start_time=time.perf_counter()):
 
     self.progress = progress
@@ -16,7 +16,6 @@ class State():
     self.elite_size = elite_size
     self.mutation_probability = mutation_probability
     self.exchange_after = exchange_after
-    self.stop_after = stop_after
     self.generations = generations
     self.pqueue = pqueue
     self.update_fittest()
@@ -30,20 +29,23 @@ class State():
       except:
         self.fitness = m.fitness + 1
       finally:
-        if (self.fitness > m.fitness):
-          change = True
-          self.progress = True
-          self.fittest_time = time.perf_counter()
-          self.fitness = m.fitness
-          self.fittest_pop = m.population
-          self.generation = m.generation
+        try:
+          if (self.fitness > m.fitness):
+            change = True
+            self.progress = True
+            self.fittest_time = time.perf_counter()
+            self.fitness = m.fitness
+            self.fittest_pop = m.population
+            self.generation = m.generation
+        except AttributeError:
+          print("m={m}".format(m=m))
+          raise
     return change
 
   def print_parameters(self):
     if(not self.latex):
       print("Number of Independent Populations={nip}".format(nip=self.independent_populations))
       print("Generations before exchanging top individuals={e}".format(e=self.exchange_after))
-      print("Maximum number of idle generations={sa}".format(sa=self.stop_after))
       print("Maximum number of generations={max}".format(max=self.generations))
       print("Population size={ps}".format(ps=self.population_size))
       print("Elite size={es}".format(es=self.elite_size))
@@ -51,7 +53,6 @@ class State():
     else:
       print("Independent Populations & {ip} //".format(ip=self.independent_populations))
       print("Exchange after & {e} //".format(e=self.exchange_after))
-      print("Stop after & {sa} //".format(sa=self.stop_after))
       print("Max \# generations & {max} //".format(max=self.generations))
       print("Population size & {ps} //".format(ps=self.population_size))
       print("Elite size & {es} //".format(es=self.elite_size))
