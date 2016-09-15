@@ -12,4 +12,4 @@ python3 -m cProfile       \
           -p 2    \
           -w 2    \
           -v
-echo stats | python3 -m pstats profiling.data > profiling.out
+echo -e "sort time\nstats" | python3 -m pstats profiling.data > profiling.out

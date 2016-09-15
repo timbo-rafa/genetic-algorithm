@@ -1,0 +1,1 @@
+loop ga_parallel.fitness(Chromosome)?

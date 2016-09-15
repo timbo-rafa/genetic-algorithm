@@ -1,0 +1,5 @@
+1. Python's cProfile does not work well with multiprocessing, you need to change code
+to profile functions from inside the children processes.
+
+2. Multiprocessing uses processes instead of threads, so communication gets more expensive
+with all unnecessary memory copies.
