@@ -44,14 +44,14 @@ def parse_arguments():
   parser.add_argument(argstr.chromosomes.short, argstr.chromosomes.string,
     type=int, metavar="N",
     help="Population size (number of chromosomes per population)",
-    default=220)
+    default=420)
   parser.add_argument(argstr.workers.short, argstr.workers.string,
     type=int, metavar="N",
     help="""Number of pool workers.
     This divides population size c into w processes.
-    1 <= w <= cpu_count""", default=max(1,mp.cpu_count()//4))
+    1 <= w <= cpu_count""", default=2)
   parser.add_argument(argstr.generations.short, argstr.generations.string,
-    type=int, help="Number of iterations", metavar="N", default=100000)
+    type=int, help="Number of iterations", metavar="N", default=2000)
   parser.add_argument(argstr.elite.short, argstr.elite.string,
     type=int, help="Number of elite individuals", metavar="N", default=20)
   parser.add_argument(argstr.mprobability.short, argstr.mprobability.string,
