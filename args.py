@@ -40,18 +40,18 @@ def parse_arguments():
   parser.add_argument(argstr.populations.short, argstr.populations.string,
     type=int, metavar="N", help="""Number of independent populations.
     This will use p processes.
-    Recommended 1 <= p <= cpu_count""", default=max(1,mp.cpu_count()//2))
+    Recommended 1 <= p <= cpu_count""", default=4)
   parser.add_argument(argstr.chromosomes.short, argstr.chromosomes.string,
     type=int, metavar="N",
     help="Population size (number of chromosomes per population)",
-    default=420)
+    default=2000)
   parser.add_argument(argstr.workers.short, argstr.workers.string,
     type=int, metavar="N",
     help="""Number of pool workers.
     This divides population size c into w processes.
-    1 <= w <= cpu_count""", default=2)
+    1 <= w <= cpu_count""", default=max(1,mp.cpu_count()//4))
   parser.add_argument(argstr.generations.short, argstr.generations.string,
-    type=int, help="Number of iterations", metavar="N", default=2000)
+    type=int, help="Number of iterations", metavar="N", default=800)
   parser.add_argument(argstr.elite.short, argstr.elite.string,
     type=int, help="Number of elite individuals", metavar="N", default=20)
   parser.add_argument(argstr.mprobability.short, argstr.mprobability.string,
@@ -59,7 +59,7 @@ def parse_arguments():
     help="Probability of mutation occurring", default=0.20)
   parser.add_argument(argstr.cities.short, argstr.cities.string,
     type=int, help="Number of cities (in the graph)",
-    metavar="N", default=200)
+    metavar="N", default=50)
   parser.add_argument(argstr.exchange.short, argstr.exchange.string,
     type=int, metavar="N",
     help="Number of generations required to exchange individuals",
