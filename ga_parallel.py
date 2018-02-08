@@ -19,7 +19,7 @@ def round_down(num, divisor):
 
 def weighted_choice(weighted_total, population):
   choice = random.uniform(0, weighted_total)
-#paralelizar dando n chromosomos para cada processo
+  #paralelizar dando n chromosomos para cada processo
   for c in population:
     if choice < c.weighted_fitness:
       return c
@@ -40,9 +40,9 @@ def evolve_consumer_worker(q, chunksize, mutation_probability, wid):
   new_pop = []
   for _ in repeat(None, chunksize):
     chromosome_pair = q.get()
-#reproduce
+    #reproduce
     child1, child2 = chromosome_pair[0].crossover(chromosome_pair[1])
-#mutate
+    #mutate
     if (random.random() < mutation_probability ):
       child1.mutate()
     if (random.random() < mutation_probability ):
@@ -58,8 +58,8 @@ def evolve_consumer_worker(q, chunksize, mutation_probability, wid):
 def calculate_fitness_worker(g, chromosomes):
 #TODO :
 # fazer loop paralelo no path_cost talvez
-      self.fitness_total += c.fitness
-      self.weighted_total += c.weighted_fitness
+  self.fitness_total += c.fitness
+  self.weighted_total += c.weighted_fitness
 
 class MessageGA():
   def __init__(self, generation, population, fittest_fitness, pid=-1):
@@ -165,6 +165,7 @@ class GA():
       for _ in repeat(None, self.number_workers//2):
         prod.append(self.pool.apply_async(weighted_choice_producer_worker, args=(
           consumer_queue, chunksize + remainder, self.weighted_total, self.population, pid)))
+        # put remainder on first queue
         remainder = 0
       
       cons = []
