@@ -1,6 +1,6 @@
 #!/bin/bash
 python3 main.py --cities 50 \
-                --chromosomes 800 \
+                --chromosomes 820 \
                 --generations 1000 \
                 --exchange 200 \
                 --elite 20 \

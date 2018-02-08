@@ -57,10 +57,15 @@ class GA():
     if (self.elite_size < 1):
       raise ValueError("Elite size must be positive.")
     if ((population_size - elite_size) % (2 * self.number_workers) != 0):
-      raise ValueError(("Population size({ps}) - Elite size({es}) must be a multiple of " +
-        "2*number_workers=({dc}). Population size - elite size  % {dc} = {r}").format(
-        ps=population_size, es=elite_size, dc=2*self.number_workers,
-        r=(population_size - elite_size) % (2 * self.number_workers)))
+      dc  = 2 * self.number_workers
+      r   = (population_size - elite_size) % dc
+      fix = population_size + dc - r
+      raise ValueError(
+        ("""(Population size - Elite size) must be a multiple of 2*number_workers.
+        {ps} % {dc} = {r} (should be 0)
+        Quick fix: use --chromosomes {fix} instead.""").format(
+          ps=population_size, es=elite_size, dc=dc, r=r, fix=fix
+        ))
 
   def __init_per_process__(self):
     self.g = Graph(self.chromosome_size + 1)
