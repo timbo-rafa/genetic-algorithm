@@ -5,6 +5,6 @@ python3 main.py --cities 200 \
                 --exchange 200 \
                 --elite 20 \
                 --mprobability 0.20 \
-                --populations 6 \
-                --workers 4 \
+                --populations 4 \
+                --workers 2 \
                 --verbose 
