@@ -4,14 +4,14 @@ import itertools
 import time
 
 def run(
-  #parameters
-  exchange_after, generations,
-  #graph parameters
-  cities,
-  #ga parameters
-  population_size, elite_size, mutation_probability,
-  independent_populations, number_workers, 
-  verbose=False, latex=False):
+    #parameters
+    exchange_after, generations,
+    #graph parameters
+    cities,
+    #ga parameters
+    population_size, elite_size, mutation_probability,
+    independent_populations, number_workers, 
+    verbose=False, latex=False):
   """Outermost loop function that evolves the genetic algorithm,
   delegating output to state and specifics to the GA class"""
   #Checking for valid parameters
