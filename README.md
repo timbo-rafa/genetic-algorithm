@@ -3,3 +3,16 @@
 # Genetic Algorithm
 Genetic Algorithm code solving the TSP problem
 
+
+### Run
+
+![Running](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/readme/screenshots/genetic-algorithms-run.gif)
+
+### Testing
+
+Tests made using [nose](http://nose.readthedocs.io/en/latest/)
+![Testing](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/readme/screenshots/genetic-algorithms-test.gif)
+
+### Profiling
+
+![Profiling](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/readme/screenshots/genetic-algorithms-profiler.gif)
