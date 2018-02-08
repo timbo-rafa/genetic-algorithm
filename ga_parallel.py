@@ -90,6 +90,11 @@ class GA():
       output_queue,     #output parameters to print status of each queue
       departure_queue,  #queue where we send the best individuals to exchange w foreign pop
       arrival_queue):   #queue where this population receives new individuals
+    """per process generations loop to evolve the chromosome populations
+      pid: process pid.
+      output_queue: output queue to print status of
+      departure_queue: queue where we send the best individuals to exchange with other populations
+      arrival_queue: queue where this population receives new individuals"""
 
     self.__init_per_process__()
     total = (self.population_size - self.elite_size)//2

@@ -11,9 +11,19 @@ def run(
     #ga parameters
     population_size, elite_size, mutation_probability,
     independent_populations, number_workers, 
-    verbose=False, latex=False):
+    verbose=True, latex=False):
   """Outermost loop function that evolves the genetic algorithm,
-  delegating output to state and specifics to the GA class"""
+  delegating output to state and specifics to the GA class
+    exchange_after: populations exchange best individuals after exchange_after generations.
+    generations: number of iterations to evolve.
+    cities: number of cities in the TSP graph.
+    population_size: how many individuals/chromosomes per population.
+    elite_size: how many individuals/chromosomes are chosen as the fittests.
+    mutation_probability: percentage of chromosome to mutate.
+    independent_populations: number of independent populations to evolve.
+    number_workers: number of workers per process.
+    verbose: if received parameters are displayed (tbd).
+    latex: if output should be in latex format."""
   #Checking for valid parameters
   if (exchange_after > generations):
     raise ValueError(
@@ -68,8 +78,8 @@ def run(
   if (generation + 1 == generations):
     s.print_stop(generation)
 
-  if (verbose):
-    s.print_solution()
+  #if (verbose):
+  s.print_solution()
 
   for ql in [pqueue, departure_queues, arrival_queues]:
     for q in ql:

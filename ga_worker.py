@@ -13,7 +13,12 @@ def weighted_choice(weighted_total, population):
   return population[0] 
 
 def weighted_choice_producer(q, chunksize, weighted_total, population, wid):
-  """Asynchronous producer function that chooses n chromosomes from population"""
+  """Asynchronous producer function that chooses n chromosomes from population
+    q: queue with chosen chromosomes
+    chunksize: number of chromosomes to be picked
+    weighted_total: sum of fitness weights. In probability this usually sums up to 1.0.
+    population: array of chromosomes to draw from
+    wid: worker pid"""
 
   for _ in repeat(None, chunksize):
     t = (weighted_choice(weighted_total, population),
