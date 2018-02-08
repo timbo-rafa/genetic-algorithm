@@ -5,3 +5,6 @@ python:
 
 script:
   - python main.py
+
+install:
+  - pip install networkx
