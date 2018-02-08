@@ -3,4 +3,5 @@
 *.log
 *.aux
 *.bbl
+*.gpickle
 test/randomstuff/*
