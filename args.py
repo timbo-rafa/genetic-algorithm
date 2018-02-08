@@ -44,7 +44,7 @@ def parse_arguments():
   parser.add_argument(argstr.chromosomes.short, argstr.chromosomes.string,
     type=int, metavar="N",
     help="Population size (number of chromosomes per population)",
-    default=2000)
+    default=2020)
   parser.add_argument(argstr.workers.short, argstr.workers.string,
     type=int, metavar="N",
     help="""Number of pool workers.
