@@ -4,7 +4,15 @@
 Genetic Algorithm code solving the TSP problem
 
 
-### Run
+### Installation
+
+```bash
+git clone https://github.com/timbo-rafa/genetic-algorithm
+cd genetic-algorithm
+pip install networkx
+```
+
+### Running
 
 ![Running](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/readme/screenshots/genetic-algorithms-run.gif)
 
