@@ -18,7 +18,7 @@ def weighted_choice_producer(q, chunksize, weighted_total, population, wid):
     chunksize: number of chromosomes to be picked
     weighted_total: sum of fitness weights. In probability this usually sums up to 1.0.
     population: array of chromosomes to draw from
-    wid: worker pid"""
+    wid: worker id."""
 
   for _ in repeat(None, chunksize):
     t = (weighted_choice(weighted_total, population),
@@ -27,7 +27,11 @@ def weighted_choice_producer(q, chunksize, weighted_total, population, wid):
 
 def evolve_consumer(q, chunksize, mutation_probability, wid):
   """Asynchronous consumer function that reproduces and mutates the population
-  producing _chunksize_ individuals"""
+  producing _chunksize_ individuals
+  q: queue with chromosomes to be consumed and evolved.
+  chunksize: number of pairs of chromosomes to be consumed and evolved.
+  mutation_probability: probability that a chromosome will mutate.
+  wid: worker id."""
   new_pop = []
   for _ in repeat(None, chunksize):
     chromosome_pair = q.get()
