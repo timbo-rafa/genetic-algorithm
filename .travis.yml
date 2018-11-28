@@ -1,11 +1,11 @@
 language: python
 
 python:
-  - "3.5.5"
+  - "3.5."
 
 install:
   - pip install networkx
 
 script:
   - nosetests --processes=4 --process-timeout=60 test
-  - python main.py
+  #- python main.py
