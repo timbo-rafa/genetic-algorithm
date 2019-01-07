@@ -1,5 +1,5 @@
-from ga import Chromosome
-from graph import Graph
+from tsp.ga import Chromosome
+from tsp.graph import Graph
 from nose.tools import assert_equal, assert_not_equal
 import numpy as np
 

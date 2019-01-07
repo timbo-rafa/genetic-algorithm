@@ -1,14 +1,17 @@
 from nose.tools import assert_equal, assert_not_equal
-from chromosome import Chromosome
-from args import ArgsStrings, parse_arguments
 from mock import patch
-import sys
-
-from ga import GA
-from graph import Graph
 from itertools import repeat
 
+# please export tsp root folder to PYTHONPATH
+# export PYTHONPATH=.
+from tsp.ga import GA
+from tsp.graph import Graph
+from tsp.chromosome import Chromosome
+from tsp.args import ArgsStrings, parse_arguments
+import sys
+
 _multiprocess_can_split_ = True
+
 
 def test_parse_arguments_bool():
   with patch.object(sys, "argv", ["./main.py"]):

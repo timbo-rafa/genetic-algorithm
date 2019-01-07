@@ -1,4 +1,4 @@
-from ga import Chromosome
+from tsp.ga import Chromosome
 from nose.tools import assert_equal, assert_not_equal
 import numpy as np
 import random

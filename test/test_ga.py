@@ -1,7 +1,7 @@
 from nose.tools import assert_equal, assert_not_equal
-from chromosome import Chromosome
-from ga import GA
-from graph import Graph
+from tsp.chromosome import Chromosome
+from tsp.ga import GA
+from tsp.graph import Graph
 from itertools import repeat
 import numpy as np
 

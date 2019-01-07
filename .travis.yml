@@ -5,7 +5,9 @@ python:
 
 install:
   - pip install networkx
+  #- pip install nose
+  #- pip install mock
 
 script:
-  - nosetests --processes=4 --process-timeout=60 test
+  - ./sh/test.sh
   #- python main.py

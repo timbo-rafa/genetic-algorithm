@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import random
-from chromosome import Chromosome
-from graph import Graph #
+from .chromosome import Chromosome
+from .graph import Graph 
 from itertools import repeat
 import numpy as np
 

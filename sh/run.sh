@@ -1,7 +1,7 @@
 #!/bin/bash
-python3 main.py --cities 50 \
+python3 tsp/main.py --cities 50 \
                 --chromosomes 820 \
-                --generations 1000 \
+                --generations 400 \
                 --exchange 200 \
                 --elite 20 \
                 --mprobability 0.20 \
