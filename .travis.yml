@@ -5,12 +5,13 @@ python:
   - "3.5"
 
 install:
-  - pip install networkx
+  - pip install networkx coverage nosexcover
   #- pip install nose
   #- pip install mock
 
 script:
-  - ./sh/test.sh
+  -  nosetests -sv --with-xunit --xunit-file=nosetests.xml --with-xcoverage --xcoverage-file=coverage.xml
+  #- ./sh/test.sh
   - sonar-scanner
   #- python main.py
  
