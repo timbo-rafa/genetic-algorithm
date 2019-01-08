@@ -11,4 +11,5 @@ install:
 
 script:
   - ./sh/test.sh
+  - sonar-scanner
   #- python main.py
