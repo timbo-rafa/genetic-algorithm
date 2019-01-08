@@ -13,3 +13,7 @@ script:
   - ./sh/test.sh
   - sonar-scanner
   #- python main.py
+ 
+addons:
+  sonarcloud:
+    organization: timbo-rafa-github
