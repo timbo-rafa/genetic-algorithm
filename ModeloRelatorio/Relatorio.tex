@@ -1,0 +1,300 @@
+%% Adaptado de 
+%% http://www.ctan.org/tex-archive/macros/latex/contrib/IEEEtran/
+%% Traduzido para o congresso de IC da USP
+%%*****************************************************************************
+% Não modificar
+
+\documentclass[twoside,conference,a4paper]{IEEEtran}
+
+%******************************************************************************
+% Não modificar
+\usepackage{IEEEtsup} % Definições complementares e modificações.
+\usepackage[latin1]{inputenc} % Disponibiliza acentos.
+\usepackage[english,brazil]{babel}
+%% Disponibiliza Inglês e Português do Brasil.
+\usepackage{latexsym,amsfonts,amssymb} % Disponibiliza fontes adicionais.
+\usepackage{theorem} 
+\usepackage[cmex10]{amsmath} % Pacote matemático básico 
+\usepackage{url} 
+%\usepackage[portuges,brazil,english]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+\usepackage[tight,footnotesize]{subfigure} 
+\usepackage[noadjust]{cite} % Disponibiliza melhorias em citações.
+%%*****************************************************************************
+
+\begin{document}
+\selectlanguage{brazil}
+\renewcommand{\IEEEkeywordsname}{Palavras-chave}
+
+%%*****************************************************************************
+
+\urlstyle{tt}
+% Indicar o nome do autor e o curso/nível (grad-mestrado-doutorado-especial)
+\title{Resolução do TSP com algoritmo genético}
+\author{%
+ \IEEEauthorblockN{Rafael\,\IEEEauthorrefmark{1}}
+ \IEEEauthorblockA{\IEEEauthorrefmark{1}%
+                   Ciência da Computação - Graduação \\
+                   E-mail: rafael@ic.unicamp.br}
+}
+
+%%*****************************************************************************
+
+\maketitle
+
+%%*****************************************************************************
+% Resumo do trabalho
+\begin{abstract}
+  Este trabalho é um relatório sobre a aplicação de um algoritmo genético para encontrar uma
+  solução para o problema do caixeiro viajante - {\it Traveling Salesman Problem (TSP)}.
+  O TSP é um problema de
+  otimização combinatória e possui aplicação em diversas áreas, como planejamento, logística,
+  fabricação de circuitos, robótica, astronomia, sequenciamento de DNA. A abstração da cidade
+  pode significar pontos de entrega, pontos de solda, fragmentos de DNA, enquanto a distancia
+  da cidade representa um custo ou penalidade. Implementamos um algoritmo genético para
+  resolver este problema, em que cada individuo representa uma possível solução para o TSP.
+  e encontramos...
+  %Falta o resultado, jovem
+\end{abstract}
+
+% Indique três palavras-chave que descrevem o trabalho
+\begin{IEEEkeywords}
+  TSP, algoritmo genético
+\end{IEEEkeywords}
+
+%%*****************************************************************************
+% Modifique as seções de acordo com o seu projeto
+
+\section{Introdução}
+  O problema de decisão do TSP pertence a classe dos problemas NP-difíceis.
+  A classe dos problemas NP-difíceis refere-se aos problemas que o tempo de resolução
+  com os algoritmos conhecidos cresce
+  exponencialmente com o aumento da entrada(neste caso, o número de cidades).
+  Assim, um método
+  eficiente para se encontrar uma solução exata não é conhecido. Neste caso,
+  pode-ser utilizar um algoritmo de busca heurística
+  no espaço de soluções para encontrar uma solução em tempo viável. Um algoritmo evolutivo
+  utiliza uma abordagem biológica para se obter uma solução, utilizando técnicas como
+  hereditariedade, mutação, seleção e recombinação. Utilizando processos similares aos
+  de seleção natural, um algoritmo genético encontra soluções satisfatórias em tempo viável,
+  embora não garanta a melhor solução.
+  % descrever secoes
+
+\section{Trabalho Proposto}
+  Propomos então a resolução do TSP através de um algoritmo genético.
+  No problema do caixeiro viajante, um vendedor tem que sair de uma cidade de origem $S$,
+  passar por todas as outras $N$ cidades, e retornar à cidade de origem. O objetivo é minimizar
+  o custo do caixeiro, isto é, a distância percorrida. Sejam $i = \{0,1,\ldots, N - 1\}$ as
+  cidades e $W_{i,j}$ a distância entre as cidades $i$ e $j$. Então uma solução pode ser
+  formulada como um vetor de $N - 1$ elementos, em que a $p$-ésima posição do vetor indica a
+  $(p+1)$-ésima cidade a ser visitada, sem repetições.
+  Assim, o vetor estabelece a ordem de visita às cidades,
+  começando em $S$, percorrendo todas as cidades na ordem indicada pelo vetor, depois retornando
+  à $S$. Para construir este vetor, utilizamos um algoritmo genético. Um algoritmo genético
+  consiste em criar uma população de indivíduos, cada um representando uma possível solução.
+  Aplicamos então o conceito de seleção natural: os indivíduos misturam suas características,
+  se reproduzem, sofrem mutação e os mais aptos sobrevivem. É através da função de aptidão que
+  guiamos o algoritmo para encontrar boas soluções.
+  
+  Entretanto,
+  a abordagem convencional para as operações comumente utilizadas em algoritmos genéticos
+  geram soluções frequentemente inválidas, com cidades repetidas ou outras ausentes.
+  Na literatura são encontrados três tipos de solução para este problema: {\it consertar}
+  o cromossomo inválido, fazendo o mínimo de reparação necessária, para manter o esforço do
+  crossover. Esta abordagem consome muito tempo gerando cromossomos inválidos e tentando
+  repará-los; {\it descartar} os cromossomos inválidos. Nesta técnica também perde-se muito
+  tempo na geração de cromossomos inválidos e eliminando-os; Por fim, podemos utilizar
+  operadores especializados, que gerem somente soluções válidas para este problema.
+  Na literatura encontramos diversos operadores que respeitam que respeitam as propriedades do
+  nosso problema: Partially - Mapped Crossover, Position Based Crossover,
+  Order Based Crossover, Order - Crossover, Heuristic Crossover, Edge Recombination Crossover,
+  Sorted Match Crossover, Maximal Preservative Crossover, Voting Recombination Crossover,
+  Alternating - Position Crossover.
+
+  Nosso algoritmo genético utiliza a abordagem de crossover ordernado,
+  e possui as seguintes características:
+  \subsection{Inicialização}
+  Na inicialização, configuramos diversos parâmetros essenciais para o algoritmo, que será
+  o ponto de partida:
+
+  \begin{table}[ht]
+  \renewcommand{\arraystretch}{1.3}
+  \centering
+   \caption{Parâmetros}
+   \label{tab:tab1}
+   \begin{tabular}{ll}\hline
+    Variavel & Descrição \\
+    population\textunderscore size & \# de indivíduos \\
+    elite\textunderscore size & \# de ind. na elite \\
+    mutation\textunderscore probability & chance de mutação \\
+    generations & \# de iterações \\
+   \end{tabular}
+  \end{table}
+  
+  \subsection{Aptidão}
+    Na aptidão, fornecemos uma métrica para o quão bom é a solução encontrada. Neste caso, é
+    o custo do caminho começando em $S$, passando por todas as cidades na ordem estabelecida
+    pelo cromossomo, e retornando à $S$. Como queremos minimizar este valor, indivíduos com
+    o menor valor de $fitness$ possível são os mais valorizados e terão mais chance de
+    sobreviver e de se reproduzir.
+  \subsection{Crossover}
+  Crossover cria novos indivíduos combinando aspectos de indivíduos preselecionados. Este
+  método se baseia na reprodução sexuada, na expectativa de que esta combinação produza
+  indivíduos ainda mais aptos.
+
+  Escolhemos dois pais, $p1$ e $p2$, através da escolha ponderada dos indivíduos existentes,
+  considerando-se a aptidão de cada um, de modo que indivíduos mais aptos tenham mais chances
+  de serem escolhidos para a reprodução.
+  Escolhemos então subconjunto de cidades sao escolhidas. Criamos o primeiro
+  filho $o1$ copiando $p1$, mas com as cidades escolhidas na ordem imposta por $p2$.
+  O segundo filho $o2$ é feito de maneira semelhante, copiando-se $p2$, mas com a ordem de
+  $p1$ imposta nas cidades escolhidas.
+  Esta recombinação é ilustrada na figura~\ref{fig:orderedcrossover}
+
+  \begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.5\hsize]{figuras/orderedcrossover.png}
+  \caption{Operador de recombinação ordenada}
+  \label{fig:orderedcrossover}
+  \end{figure}
+
+  \subsection{Mutação}
+    Na mutação, adiciona-se o fator aleatório na genética da nossa população, caso contrário
+    o algoritmo ficaria muito limitado pela nossa população inicial.
+
+    Uma mutação ordenada correspondente à recombinação é feita escolhendo-se aleatoriamente
+    duas cidades e inserindo uma antes da outra,
+    como ilustrado na figura~\ref{fig:orderedmutation}
+  \begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.5\hsize]{figuras/orderedmutation.png}
+  \caption{Operador de mutação ordenada}
+  \label{fig:orderedmutation}
+  \end{figure}
+  \subsection{Seleção}
+    Na seleção, escolhemos quais indivíduos sobreviverão para a geração seguinte. Aqui
+    devemos garantir que as melhores soluções se mantenham na população. Utilizamos então
+    o elitismo, que garante automaticamente que os melhores
+    $elite\textunderscore size$ indivíduos passarão para a próxima geração.
+    Todos os outros indivíduos serão os filhos dos métodos mencionados
+    no crossover.
+\newpage
+\section{Resultados e Discussão}
+  \begin{table}[ht]
+  \renewcommand{\arraystretch}{1.3}
+  \centering
+   \caption{Parâmetros}
+   \label{tab:tab1}
+   \begin{tabular}{ll}\hline
+    Variavel & Valor \\
+    population\textunderscore size & 256 \\
+    elite\textunderscore size & 10 \\
+    mutation\textunderscore probability & 0.10 \\
+    generations & 600 \\
+   \end{tabular}
+  \end{table}
+
+  \begin{table}[ht]
+  \renewcommand{\arraystretch}{1.3}
+  \centering
+   \caption{Parâmetros}
+   \label{tab:tab1}
+   \begin{tabular}{lll}\hline
+    Geração & Fitness & Tempo \\
+     0 & 45781 & 0.223457 \\
+      2 & 45462 & 0.671876 \\
+      5 & 44552 & 1.35244 \\
+      127 & 44154 & 28.49071 \\
+      179 & 43720 & 40.031979 \\
+      415 & 43259 & 92.100967 \\
+      555 & 43028 & 121.681739 \\
+      573 & 42895 & 125.431887 \\
+      597 & 42619 & 130.44623 \\
+   \end{tabular}
+  \end{table}
+
+  \begin{table}[ht]
+  \renewcommand{\arraystretch}{1.3}
+  \centering
+   \caption{Parâmetros}
+   \label{tab:tab1}
+   \begin{tabular}{ll}\hline
+    Variavel & Valor \\
+    population\textunderscore size & 700 \\
+    elite\textunderscore size & 50 \\
+    mutation\textunderscore probability & 0.20 \\
+    generations & 500 \\
+   \end{tabular}
+  \end{table}
+
+  \begin{table}[ht]
+  \renewcommand{\arraystretch}{1.3}
+  \centering
+   \caption{Parâmetros}
+   \label{tab:tab1}
+   \begin{tabular}{lll}\hline
+    Geração & Fitness & Tempo \\
+      0 & 46057 & 0.602926 \\
+      2 & 45771 & 1.818027 \\
+      3 & 45181 & 2.472635 \\
+      7 & 45108 & 4.905617 \\
+      33 & 45032 & 20.904964 \\
+      34 & 44803 & 21.538026 \\
+      51 & 44247 & 31.964195 \\
+      115 & 44098 & 71.000248 \\
+      236 & 43562 & 137.0217 \\
+      455 & 43501 & 258.080205 \\
+   \end{tabular}
+  \end{table}
+  \begin{table}[ht]
+  \renewcommand{\arraystretch}{1.3}
+  \centering
+   \caption{Parâmetros}
+   \label{tab:tab1}
+   \begin{tabular}{ll}\hline
+    Variavel & Valor \\
+    population\textunderscore size & 100 \\
+    elite\textunderscore size & 5 \\
+    mutation\textunderscore probability & 0.05 \\
+    generations & 600 \\
+   \end{tabular}
+  \end{table}
+
+  \begin{table}[ht]
+  \renewcommand{\arraystretch}{1.3}
+  \centering
+   \caption{Parâmetros}
+   \label{tab:tab1}
+   \begin{tabular}{lll}\hline
+    Geração & Fitness & Tempo \\
+      0 & 45690 & 0.076724 \\
+      29 & 45473 & 2.399416 \\
+      50 & 44872 & 4.014611 \\
+      231 & 44773 & 17.491387 \\
+      233 & 44317 & 17.628184 \\
+      244 & 44089 & 18.393035 \\
+      275 & 43700 & 20.554908 \\
+      288 & 43530 & 21.457567 \\
+      307 & 43472 & 22.769787 \\
+      385 & 43443 & 28.216672 \\
+      390 & 43357 & 28.564765 \\
+      405 & 43077 & 29.604566 \\
+      442 & 42524 & 32.225477 \\
+      476 & 42107 & 34.565243 \\
+      487 & 41937 & 35.320671 \\
+      500 & 41671 & 36.242566 \\
+      524 & 41400 & 37.91116 \\
+      539 & 40909 & 38.946379 \\
+   \end{tabular}
+  \end{table}
+
+%******************************************************************************
+% Referências - Definidas no arquivo Relatorio.bib
+
+%******************************************************************************
+
+\end{document}
