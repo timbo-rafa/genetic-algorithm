@@ -30,13 +30,13 @@ pip install networkx
 
 ## Running
 
-![Running](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/readme/screenshots/genetic-algorithms-run.gif)
+![Running](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/master/screenshots/genetic-algorithms-run.gif)
 
 ### Testing
 
 Tests made using [nose](http://nose.readthedocs.io/en/latest/)
-![Testing](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/readme/screenshots/genetic-algorithms-test.gif)
+![Testing](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/master/screenshots/genetic-algorithms-test.gif)
 
 ### Profiling
 
-![Profiling](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/readme/screenshots/genetic-algorithms-profiler.gif)
+![Profiling](https://raw.githubusercontent.com/timbo-rafa/genetic-algorithm/master/screenshots/genetic-algorithms-profiler.gif)
